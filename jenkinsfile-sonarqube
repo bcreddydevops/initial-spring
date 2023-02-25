@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+    tools{
+        maven 'maven-3.9'
+    }
+    stages{
+        stage('checkout the code'){
+            steps{
+                git url:'https://github.com/bcreddydevops/initial-spring.git', branch: 'main'
+            }
+        }
+        stage('build the code'){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        stage('Generate sonarqube-analysis'){
+            steps{
+                withSonarQubeEnv(installationName: 'sonarqube-8', credentialsId: 'jenkins-sonar-token') {
+                 sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        
+    }
+}
